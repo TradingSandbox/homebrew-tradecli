@@ -3,6 +3,8 @@ class Tradecli < Formula
   homepage "https://github.com/TradingSandbox/homebrew-tradecli"
   version "0.3.7"
 
+  depends_on "node"
+
   on_macos do
     if Hardware::CPU.arm?
       url "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/v0.3.7/tradecli-v0.3.7-darwin-arm64.tar.gz"
