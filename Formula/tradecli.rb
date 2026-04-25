@@ -1,20 +1,20 @@
 class Tradecli < Formula
   desc "AI trading assistant for the Indian stock market"
   homepage "https://github.com/TradingSandbox/homebrew-tradecli"
-  version "0.3.8"
+  version "0.3.9"
 
   depends_on "node"
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/v0.3.8/tradecli-v0.3.8-darwin-arm64.tar.gz"
-      sha256 "734e0b81e4fd08d9865a62f3a6782914d0833fa507ec8d584834201b0be465b4"
+      url "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/v0.3.9/tradecli-v0.3.9-darwin-arm64.tar.gz"
+      sha256 "10a9b310acfff4982793c3d99b4d67cf3c8b03b3bdf49e53dc55df7eefd43a86"
     end
   end
 
   on_linux do
-    url "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/v0.3.8/tradecli-v0.3.8-linux-x64.tar.gz"
-    sha256 "e49b57d2db6f4126707ff09346c259820397a82fb31b7a16da8b287f8bb58049"
+    url "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/v0.3.9/tradecli-v0.3.9-linux-x64.tar.gz"
+    sha256 "58032e3fed9aea667bd643e8efddf9d61c1e0c688fb3947e45945f2310674e7d"
   end
 
   def install
