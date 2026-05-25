@@ -4,6 +4,7 @@ class Tradecli < Formula
   version "0.5.1"
 
   depends_on "node"
+  depends_on "tradecli-herdr"
 
   on_macos do
     if Hardware::CPU.arm?
@@ -13,8 +14,10 @@ class Tradecli < Formula
   end
 
   on_linux do
-    url "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/v0.5.1/tradecli-v0.5.1-linux-x64.tar.gz"
-    sha256 "a3a309a6c904220d5e6820e2f9008c7695bb3cfc3f4a8de870a43b066bf703b7"
+    on_intel do
+      url "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/v0.5.1/tradecli-v0.5.1-linux-x64.tar.gz"
+      sha256 "a3a309a6c904220d5e6820e2f9008c7695bb3cfc3f4a8de870a43b066bf703b7"
+    end
   end
 
   def install
@@ -22,6 +25,6 @@ class Tradecli < Formula
   end
 
   test do
-    assert_match "tradecli", shell_output("#{bin}/tradecli --version 2>&1", 0)
+    assert_match "tradecli", shell_output("#{bin}/tradecli --version 2>&1")
   end
 end

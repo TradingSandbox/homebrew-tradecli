@@ -1,0 +1,66 @@
+name: Formula CI
+
+on:
+  pull_request:
+    paths:
+      - "Formula/**"
+      - ".github/workflows/formula-ci.yml"
+  push:
+    branches:
+      - main
+      - "feature/**"
+    paths:
+      - "Formula/**"
+      - ".github/workflows/formula-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: formula-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-15
+          - ubuntu-latest
+
+    steps:
+      - name: Check out tap
+        uses: actions/checkout@v6
+
+      - name: Set up Homebrew
+        if: runner.os == 'Linux'
+        uses: Homebrew/actions/setup-homebrew@6eaeff80e7e5c43087c0e5eb5aa82120399e9c91
+
+      - name: Tap local checkout
+        if: runner.os != 'Linux'
+        run: |
+          brew tap TradingSandbox/tradecli "$GITHUB_WORKSPACE"
+
+      - name: Check out branch in Linux tap
+        if: runner.os == 'Linux'
+        run: |
+          tap_dir="$(brew --repository tradingsandbox/tradecli)"
+          git -C "$tap_dir" fetch --force "$GITHUB_WORKSPACE" "$GITHUB_SHA"
+          git -C "$tap_dir" checkout --detach "$GITHUB_SHA"
+
+      - name: Audit formulae
+        run: |
+          brew audit --strict --online tradingsandbox/tradecli/tradecli-herdr
+          brew audit --strict --online tradingsandbox/tradecli/tradecli
+
+      - name: Install tradecli-herdr
+        run: brew install --formula tradingsandbox/tradecli/tradecli-herdr
+
+      - name: Verify tradecli-herdr
+        run: |
+          test "$(tradecli-herdr --version)" = "herdr 0.6.2-tradecli.2"
+          brew test tradingsandbox/tradecli/tradecli-herdr
