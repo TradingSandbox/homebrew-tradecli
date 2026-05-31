@@ -54,13 +54,13 @@ jobs:
 
       - name: Audit formulae
         run: |
-          brew audit --strict --online tradingsandbox/tradecli/tradecli-herdr
+          brew audit --strict --online tradingsandbox/tradecli/herdr
           brew audit --strict --online tradingsandbox/tradecli/tradecli
 
-      - name: Install tradecli-herdr
-        run: brew install --formula tradingsandbox/tradecli/tradecli-herdr
+      - name: Install herdr
+        run: brew install --formula tradingsandbox/tradecli/herdr
 
-      - name: Verify tradecli-herdr
+      - name: Verify herdr
         run: |
-          test "$(tradecli-herdr --version)" = "herdr 0.6.2-tradecli.2"
-          brew test tradingsandbox/tradecli/tradecli-herdr
+          test "$(herdr --version)" = "herdr 0.6.2"
+          brew test tradingsandbox/tradecli/herdr

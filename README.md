@@ -8,7 +8,7 @@ Homebrew tap for [`tradecli`](https://tradecli.app) — an AI trading assistant 
 brew install TradingSandbox/tradecli/tradecli
 ```
 
-This installs `tradecli-herdr` from the same tap as a pinned Herdr runtime for
+This installs `herdr` from the same tap as a pinned upstream Herdr runtime for
 `tradecli --herdr` and `tradecli office --herdr`.
 
 Or, as two steps:
@@ -21,8 +21,8 @@ brew install tradecli
 To test only the Herdr runtime package:
 
 ```bash
-brew install TradingSandbox/tradecli/tradecli-herdr
-tradecli-herdr --version
+brew install TradingSandbox/tradecli/herdr
+herdr --version
 ```
 
 ## Upgrade

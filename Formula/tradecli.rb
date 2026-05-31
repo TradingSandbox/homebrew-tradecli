@@ -3,8 +3,8 @@ class Tradecli < Formula
   homepage "https://github.com/TradingSandbox/homebrew-tradecli"
   version "0.5.1"
 
+  depends_on "herdr"
   depends_on "node"
-  depends_on "tradecli-herdr"
 
   on_macos do
     if Hardware::CPU.arm?
