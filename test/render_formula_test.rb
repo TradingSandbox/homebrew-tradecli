@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "minitest/autorun"
+require "json"
 require "open3"
 require "tmpdir"
 
@@ -59,5 +60,11 @@ class RenderFormulaTest < Minitest::Test
       assert status.success?, "expected render script to succeed\nSTDOUT: #{stdout}\nSTDERR: #{stderr}"
       assert_equal checked_in_formula, File.read(output)
     end
+  end
+
+  def test_legacy_herdr_formula_migrates_to_homebrew_core
+    migrations = JSON.parse(File.read(File.join(ROOT, "tap_migrations.json")))
+
+    assert_equal "homebrew/core", migrations.fetch("herdr")
   end
 end
