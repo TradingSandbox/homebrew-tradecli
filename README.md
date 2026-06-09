@@ -45,3 +45,7 @@ Check your installed version:
 ```bash
 tradecli --version
 ```
+
+## Formula Template
+
+`Formula/tradecli.rb` is generated from `templates/tradecli.rb.erb`. Edit the template for packaging policy changes such as dependencies, tests, caveats, and install behavior. The upstream release pipeline runs `scripts/render-formula.rb` to fill in the release tag and archive SHAs.
