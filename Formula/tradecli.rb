@@ -4,6 +4,7 @@ class Tradecli < Formula
   homepage "https://github.com/TradingSandbox/homebrew-tradecli"
   version "0.6.2"
 
+  depends_on "ai-trading-office"
   depends_on "herdr"
   depends_on "node"
 
