@@ -1,0 +1,37 @@
+# Generated from templates/ai-trading-office.rb.erb. Edit the template, not this file.
+class AiTradingOffice < Formula
+  desc "Office lifecycle state service for TradingSandbox"
+  homepage "https://github.com/TradingSandbox/homebrew-tradecli"
+  version "<%= formula_version %>"
+
+  on_macos do
+    if Hardware::CPU.arm?
+      url "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/<%= tag %>/ai-trading-office-v<%= formula_version %>-darwin-arm64.tar.gz"
+      sha256 "<%= darwin_arm64_sha %>"
+    end
+  end
+
+  on_linux do
+    url "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/<%= tag %>/ai-trading-office-v<%= formula_version %>-linux-x64.tar.gz"
+    sha256 "<%= linux_x64_sha %>"
+  end
+
+  def install
+    payload = (buildpath/"ai-trading-office").directory? ? buildpath/"ai-trading-office" : buildpath
+    libexec.install Dir[payload/"*"]
+    bin.install_symlink libexec/"ai-trading-office"
+  end
+
+  service do
+    run [opt_bin/"ai-trading-office", "serve"]
+    keep_alive true
+    working_dir var
+    log_path var/"log/ai-trading-office.log"
+    error_log_path var/"log/ai-trading-office.log"
+    environment_variables AITO_HOST: "127.0.0.1", AITO_PORT: "8787"
+  end
+
+  test do
+    assert_match "ai-trading-office", shell_output("#{bin}/ai-trading-office --version 2>&1")
+  end
+end

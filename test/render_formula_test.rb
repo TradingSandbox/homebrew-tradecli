@@ -36,6 +36,69 @@ class RenderFormulaTest < Minitest::Test
     end
   end
 
+  def test_renders_ai_trading_office_formula_from_tap_owned_template
+    Dir.mktmpdir("office-formula-") do |dir|
+      output = File.join(dir, "ai-trading-office.rb")
+
+      stdout, stderr, status = Open3.capture3(
+        "ruby",
+        File.join(ROOT, "scripts/render-office-formula.rb"),
+        "--tag", "ai-trading-office-v0.1.0",
+        "--version", "0.1.0",
+        "--darwin-arm64-sha", "c" * 64,
+        "--linux-x64-sha", "d" * 64,
+        "--output", output,
+        chdir: ROOT,
+      )
+
+      assert status.success?, "expected render script to succeed\nSTDOUT: #{stdout}\nSTDERR: #{stderr}"
+
+      formula = File.read(output)
+      assert_includes formula, "# Generated from templates/ai-trading-office.rb.erb. Edit the template, not this file."
+      assert_includes formula, 'class AiTradingOffice < Formula'
+      assert_includes formula, 'version "0.1.0"'
+      assert_includes formula, "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/ai-trading-office-v0.1.0/ai-trading-office-v0.1.0-darwin-arm64.tar.gz"
+      assert_includes formula, "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/ai-trading-office-v0.1.0/ai-trading-office-v0.1.0-linux-x64.tar.gz"
+      assert_includes formula, %(sha256 "#{"c" * 64}")
+      assert_includes formula, %(sha256 "#{"d" * 64}")
+      assert_includes formula, 'payload = (buildpath/"ai-trading-office").directory? ? buildpath/"ai-trading-office" : buildpath'
+      assert_includes formula, 'libexec.install Dir[payload/"*"]'
+      assert_includes formula, 'run [opt_bin/"ai-trading-office", "serve"]'
+    end
+  end
+
+  def test_adds_ai_trading_office_dependency_idempotently
+    Dir.mktmpdir("office-dependency-") do |dir|
+      template = File.join(dir, "tradecli.rb.erb")
+      formula = File.join(dir, "tradecli.rb")
+      original = <<~RUBY
+        class Tradecli < Formula
+          depends_on "herdr"
+          depends_on "node"
+        end
+      RUBY
+      File.write(template, original)
+      File.write(formula, original)
+
+      2.times do
+        stdout, stderr, status = Open3.capture3(
+          "ruby",
+          File.join(ROOT, "scripts/add-office-dependency.rb"),
+          template,
+          formula,
+          chdir: ROOT,
+        )
+        assert status.success?, "expected dependency script to succeed\nSTDOUT: #{stdout}\nSTDERR: #{stderr}"
+      end
+
+      [template, formula].each do |path|
+        text = File.read(path)
+        assert_equal 1, text.scan('depends_on "ai-trading-office"').length
+        assert_includes text, %(  depends_on "ai-trading-office"\n  depends_on "herdr"\n)
+      end
+    end
+  end
+
   def test_checked_in_formula_matches_template
     checked_in_formula = File.read(File.join(ROOT, "Formula/tradecli.rb"))
     version = checked_in_formula[/^\s*version "([^"]+)"/, 1]
