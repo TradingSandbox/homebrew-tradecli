@@ -67,6 +67,102 @@ class RenderFormulaTest < Minitest::Test
     end
   end
 
+  def test_renders_tradecli_bottle_block_when_bottle_shas_provided
+    Dir.mktmpdir("tradecli-bottle-") do |dir|
+      output = File.join(dir, "tradecli.rb")
+
+      stdout, stderr, status = Open3.capture3(
+        "ruby",
+        File.join(ROOT, "scripts/render-formula.rb"),
+        "--tag", "v0.6.5",
+        "--darwin-arm64-sha", "a" * 64,
+        "--linux-x64-sha", "b" * 64,
+        "--darwin-arm64-bottle-sha", "C" * 64,
+        "--linux-x64-bottle-sha", "d" * 64,
+        "--output", output,
+        chdir: ROOT,
+      )
+
+      assert status.success?, "expected render script to succeed\nSTDOUT: #{stdout}\nSTDERR: #{stderr}"
+
+      formula = File.read(output)
+      assert_includes formula, "bottle do"
+      assert_includes formula, 'root_url "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/v0.6.5"'
+      assert_includes formula, %(sha256 cellar: :any_skip_relocation, arm64_sonoma: "#{"c" * 64}")
+      assert_includes formula, %(sha256 cellar: :any_skip_relocation, x86_64_linux: "#{"d" * 64}")
+      # Source fallback must remain intact alongside the bottle block.
+      assert_includes formula, "tradecli-v0.6.5-darwin-arm64.tar.gz"
+      assert_includes formula, "def install"
+    end
+  end
+
+  def test_omits_tradecli_bottle_block_without_bottle_shas
+    Dir.mktmpdir("tradecli-nobottle-") do |dir|
+      output = File.join(dir, "tradecli.rb")
+
+      _, stderr, status = Open3.capture3(
+        "ruby",
+        File.join(ROOT, "scripts/render-formula.rb"),
+        "--tag", "v0.6.5",
+        "--darwin-arm64-sha", "a" * 64,
+        "--linux-x64-sha", "b" * 64,
+        "--output", output,
+        chdir: ROOT,
+      )
+
+      assert status.success?, "expected render script to succeed\nSTDERR: #{stderr}"
+      refute_includes File.read(output), "bottle do"
+    end
+  end
+
+  def test_renders_ai_trading_office_bottle_block_when_bottle_shas_provided
+    Dir.mktmpdir("office-bottle-") do |dir|
+      output = File.join(dir, "ai-trading-office.rb")
+
+      stdout, stderr, status = Open3.capture3(
+        "ruby",
+        File.join(ROOT, "scripts/render-office-formula.rb"),
+        "--tag", "ai-trading-office-v0.1.1",
+        "--version", "0.1.1",
+        "--darwin-arm64-sha", "c" * 64,
+        "--linux-x64-sha", "d" * 64,
+        "--darwin-arm64-bottle-sha", "e" * 64,
+        "--linux-x64-bottle-sha", "f" * 64,
+        "--output", output,
+        chdir: ROOT,
+      )
+
+      assert status.success?, "expected render script to succeed\nSTDOUT: #{stdout}\nSTDERR: #{stderr}"
+
+      formula = File.read(output)
+      assert_includes formula, "bottle do"
+      assert_includes formula, 'root_url "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/ai-trading-office-v0.1.1"'
+      assert_includes formula, %(sha256 cellar: :any_skip_relocation, arm64_sonoma: "#{"e" * 64}")
+      assert_includes formula, %(sha256 cellar: :any_skip_relocation, x86_64_linux: "#{"f" * 64}")
+      assert_includes formula, 'libexec.install Dir[payload/"*"]'
+    end
+  end
+
+  def test_rejects_malformed_bottle_shas
+    Dir.mktmpdir("tradecli-badbottle-") do |dir|
+      output = File.join(dir, "tradecli.rb")
+
+      _, stderr, status = Open3.capture3(
+        "ruby",
+        File.join(ROOT, "scripts/render-formula.rb"),
+        "--tag", "v0.6.5",
+        "--darwin-arm64-sha", "a" * 64,
+        "--linux-x64-sha", "b" * 64,
+        "--darwin-arm64-bottle-sha", "not-a-sha",
+        "--output", output,
+        chdir: ROOT,
+      )
+
+      refute status.success?, "expected render script to reject malformed bottle sha"
+      assert_includes stderr, "must be a 64-character SHA256"
+    end
+  end
+
   def test_adds_ai_trading_office_dependency_idempotently
     Dir.mktmpdir("office-dependency-") do |dir|
       template = File.join(dir, "tradecli.rb.erb")

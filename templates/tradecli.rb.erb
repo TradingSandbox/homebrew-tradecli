@@ -4,6 +4,18 @@ class Tradecli < Formula
   homepage "https://github.com/TradingSandbox/homebrew-tradecli"
   version "<%= formula_version %>"
 
+<% if darwin_arm64_bottle_sha || linux_x64_bottle_sha -%>
+  bottle do
+    root_url "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/<%= tag %>"
+<% if darwin_arm64_bottle_sha -%>
+    sha256 cellar: :any_skip_relocation, arm64_sonoma: "<%= darwin_arm64_bottle_sha %>"
+<% end -%>
+<% if linux_x64_bottle_sha -%>
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "<%= linux_x64_bottle_sha %>"
+<% end -%>
+  end
+
+<% end -%>
   depends_on "ai-trading-office"
   depends_on "herdr"
   depends_on "node"

@@ -9,13 +9,15 @@ DEFAULT_TEMPLATE_RELATIVE_PATH = "templates/tradecli.rb.erb"
 DEFAULT_OUTPUT_RELATIVE_PATH = "Formula/tradecli.rb"
 
 class FormulaTemplateContext
-  attr_reader :tag, :formula_version, :darwin_arm64_sha, :linux_x64_sha
+  attr_reader :tag, :formula_version, :darwin_arm64_sha, :linux_x64_sha, :darwin_arm64_bottle_sha, :linux_x64_bottle_sha
 
-  def initialize(tag:, darwin_arm64_sha:, linux_x64_sha:)
+  def initialize(tag:, darwin_arm64_sha:, linux_x64_sha:, darwin_arm64_bottle_sha: nil, linux_x64_bottle_sha: nil)
     @tag = tag
     @formula_version = tag.sub(/\Av/, "")
     @darwin_arm64_sha = darwin_arm64_sha.downcase
     @linux_x64_sha = linux_x64_sha.downcase
+    @darwin_arm64_bottle_sha = darwin_arm64_bottle_sha&.downcase
+    @linux_x64_bottle_sha = linux_x64_bottle_sha&.downcase
   end
 
   def get_binding
@@ -34,6 +36,8 @@ def parse_options(argv)
     parser.on("--tag TAG", "Release tag, including leading v") { |value| options[:tag] = value }
     parser.on("--darwin-arm64-sha SHA", "SHA256 for the macOS arm64 archive") { |value| options[:darwin_arm64_sha] = value }
     parser.on("--linux-x64-sha SHA", "SHA256 for the Linux x64 archive") { |value| options[:linux_x64_sha] = value }
+    parser.on("--darwin-arm64-bottle-sha SHA", "SHA256 for the macOS arm64 bottle (optional)") { |value| options[:darwin_arm64_bottle_sha] = value }
+    parser.on("--linux-x64-bottle-sha SHA", "SHA256 for the Linux x64 bottle (optional)") { |value| options[:linux_x64_bottle_sha] = value }
     parser.on("--template PATH", "Template path") { |value| options[:template] = File.expand_path(value, ROOT) }
     parser.on("--output PATH", "Output formula path") { |value| options[:output] = File.expand_path(value, ROOT) }
   end.parse!(argv)
@@ -51,6 +55,12 @@ def validate_options!(options)
 
     abort "--#{key.to_s.tr("_", "-")} must be a 64-character SHA256"
   end
+
+  [:darwin_arm64_bottle_sha, :linux_x64_bottle_sha].each do |key|
+    next if options[key].to_s.empty? || options[key].match?(/\A[0-9a-fA-F]{64}\z/)
+
+    abort "--#{key.to_s.tr("_", "-")} must be a 64-character SHA256"
+  end
 end
 
 options = parse_options(ARGV)
@@ -60,6 +70,8 @@ context = FormulaTemplateContext.new(
   tag: options[:tag],
   darwin_arm64_sha: options[:darwin_arm64_sha],
   linux_x64_sha: options[:linux_x64_sha],
+  darwin_arm64_bottle_sha: options[:darwin_arm64_bottle_sha],
+  linux_x64_bottle_sha: options[:linux_x64_bottle_sha],
 )
 
 template = ERB.new(File.read(options[:template]), trim_mode: "-")
