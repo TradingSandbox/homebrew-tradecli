@@ -2,12 +2,12 @@
 class Tradecli < Formula
   desc "AI trading assistant for the Indian stock market"
   homepage "https://github.com/TradingSandbox/homebrew-tradecli"
-  version "0.6.9"
+  version "0.6.10"
 
   bottle do
-    root_url "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/v0.6.9"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma: "cf8eb5c4755ae35e08e1eeee85fc8695f68d06055b940b9b7378f9265b664494"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "53db6be1dfabdb4ed04ba55766b4d9125b97d0b8df3b66fa5fdffd452b50be05"
+    root_url "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/v0.6.10"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma: "2bebcc4ec1a764bc8200ebd1d65302b8161003f394c56409aebd1f4d232d63f4"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "7dba2e1468c2244bc53e4adb177567e874e4d7b2479c36333815d5b38ac46740"
   end
 
   depends_on "ai-trading-office"
@@ -16,14 +16,14 @@ class Tradecli < Formula
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/v0.6.9/tradecli-v0.6.9-darwin-arm64.tar.gz"
-      sha256 "0c763a557caa93683ae53c96b4cb84d3ad582363d0d1921386287dc4584be298"
+      url "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/v0.6.10/tradecli-v0.6.10-darwin-arm64.tar.gz"
+      sha256 "331b79ec170fc36ee90b1cda631f18a270cc523de83ae46b5aa825c4493db3d2"
     end
   end
 
   on_linux do
-    url "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/v0.6.9/tradecli-v0.6.9-linux-x64.tar.gz"
-    sha256 "3f7b75598097fc1ad022d5e4bb83fd4b4afb671216d67fee0e98632d1db3fc6c"
+    url "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/v0.6.10/tradecli-v0.6.10-linux-x64.tar.gz"
+    sha256 "b91e786b094f1230b930471a4e0b19e0910dad245f1d5ad657222fd368eae02c"
   end
 
   def install
