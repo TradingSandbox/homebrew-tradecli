@@ -2,24 +2,24 @@
 class AiTradingOffice < Formula
   desc "Office lifecycle state service for TradingSandbox"
   homepage "https://github.com/TradingSandbox/homebrew-tradecli"
-  version "0.1.2"
+  version "0.1.3"
 
   bottle do
-    root_url "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/ai-trading-office-v0.1.2"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma: "407e0f6fc09fe2084b2b0357ef61c4571a7ae989673f4fd35ab01efcfd269935"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "172705ae2296d83fce9805222c5be97138d819ff164456bacf9166d2c7f13ec9"
+    root_url "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/ai-trading-office-v0.1.3"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma: "4cbdd9dce8d076291d8b92c3533ad1721a67a83fd5c12e4cbd7823b6dcb8cb1a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "98bf49637253faa75c5aa47bd8174706ac78c717e882cbca6ec581117298844f"
   end
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/ai-trading-office-v0.1.2/ai-trading-office-v0.1.2-darwin-arm64.tar.gz"
-      sha256 "26e5f1d7e558b2eaf23913c8c8b254218a8a6b751b9e705e42760fad83ee256e"
+      url "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/ai-trading-office-v0.1.3/ai-trading-office-v0.1.3-darwin-arm64.tar.gz"
+      sha256 "eef885f490da00d72cb54696f6fbdac276bca78031a3f3899846f1398d7c92b9"
     end
   end
 
   on_linux do
-    url "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/ai-trading-office-v0.1.2/ai-trading-office-v0.1.2-linux-x64.tar.gz"
-    sha256 "502162173698d17b8a0b8fd204c350aed258033382eb512696891c7f8ab2f44e"
+    url "https://github.com/TradingSandbox/homebrew-tradecli/releases/download/ai-trading-office-v0.1.3/ai-trading-office-v0.1.3-linux-x64.tar.gz"
+    sha256 "7de9e1fb9dcb3f226c9a3f7c3a5eb6298937bf1e190d6cf4d61832aae46cfec6"
   end
 
   def install
